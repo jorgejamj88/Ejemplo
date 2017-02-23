@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="JorgeModelStoreContainer" CdmEntityContainer="Entities">
+    <EntitySetMapping Name="Tbl_Personas">
+      <EntityTypeMapping TypeName="JorgeModel.Tbl_Personas">
+        <MappingFragment StoreEntitySet="Tbl_Personas">
+          <ScalarProperty Name="Estatus" ColumnName="Estatus" />
+          <ScalarProperty Name="CURP" ColumnName="CURP" />
+          <ScalarProperty Name="ApellidoMaterno" ColumnName="ApellidoMaterno" />
+          <ScalarProperty Name="ApellidoPaterno" ColumnName="ApellidoPaterno" />
+          <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

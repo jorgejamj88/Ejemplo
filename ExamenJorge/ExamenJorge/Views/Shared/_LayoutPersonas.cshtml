@@ -1,0 +1,37 @@
+﻿@using System.Web.Optimization
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Your Website &bull; @ViewBag.Title</title>
+
+    @Styles.Render("~/css")
+    @Scripts.Render("~/js")
+    @RenderSection("scripts", required: false)
+
+    <script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+
+</head>
+<body>
+
+    <div class="container-fluid">
+
+        <div class="row-fluid">
+            <div id="content">
+                <div>
+                    @RenderBody()
+                </div>
+            </div>
+        </div>
+
+        @*<div class="row-fluid">
+            <footer id="footer">
+                <p>&copy; 2013, Your Company Limited</p>
+            </footer>
+        </div>*@
+
+    </div>
+    
+</body>
+</html>

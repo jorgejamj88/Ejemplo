@@ -1,0 +1,307 @@
+﻿@model IEnumerable<ExamenJorge.Models.Tbl_Personas>
+
+@{
+    ViewBag.Title = "ListaPersonas";
+    Layout = "~/Views/Shared/_LayoutPersonas.cshtml";
+}
+
+<div class="page-header">
+    <h2>Lista Personas</h2>
+</div>
+
+<!----------------------------------------------- Modal ----------------------------------------------------------->
+<div class="modal fade" id="exampleDialog" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">  
+    
+    <div class="modal-header">
+        <a href="#" class="close" data-dismiss="modal">&times;</a>
+        <h3 id="DlgTitulo">Persona</h3>
+    </div>
+    <div class="modal-body">
+        <div class="form-group ac">
+            <label for="recipient-name" class="form-control-label">Nombre:</label>
+            <input type="text" class="form-control requerido" id="Nombre">
+        </div>
+        <div class="form-group ac">
+            <label for="recipient-name" class="form-control-label">Apellido Paterno:</label>
+            <input type="text" class="form-control requerido" id="ApellidoPaterno">
+        </div>
+        <div class="form-group ac">
+            <label for="recipient-name" class="form-control-label">Apellido Materno:</label>
+            <input type="text" class="form-control requerido" id="ApellidoMaterno">
+        </div>
+        <div class="form-group ac">
+            <label for="recipient-name" class="form-control-label">CURP:</label>
+            <input type="text" class="form-control requerido" id="CURP">
+        </div>
+        <div class="form-group ac" id="GroupEstatus">
+            <label for="recipient-name" class="form-control-label">Estatus:</label>
+            <select class="selectpicker" id="Estatus">
+                <option value="1">Alta</option>
+                <option value="0">Baja</option>
+            </select>
+        </div>
+        <div class="form-group b">
+            <label for="recipient-name" class="form-control-label">Estas seguro de eliminar el registro.</label>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Guardar</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+    </div>
+
+</div>
+
+<p><a class="btn btn-info" data-toggle="modal" href="#exampleDialog" id="Nuevo">Crear Persona</a></p>
+
+<div class="dataTables_filter">
+    <label>Buscar:<input placeholder="Buscar" aria-controls="TblPresonas" id="Buscar"></label>
+</div>
+
+<table class="table" id="TblPresonas" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.Nombre)</th>
+            <th>@Html.DisplayNameFor(model => model.ApellidoPaterno)</th>
+            <th>@Html.DisplayNameFor(model => model.ApellidoMaterno)</th>
+            <th>@Html.DisplayNameFor(model => model.CURP)</th>
+            <th>Accion</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nombre)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ApellidoPaterno)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ApellidoMaterno)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CURP)
+                </td>
+                <td>
+                    <a class="btn btn-info" data-toggle="modal" href="#exampleDialog" id="BtnEditar" onclick="editar(@Html.DisplayFor(modelItem => item.Id))">Editar</a>
+                    <a class="btn btn-info" data-toggle="modal" href="#exampleDialog" id="BtnEliminar" onclick="eliminar(@Html.DisplayFor(modelItem => item.Id))">Eliminar</a>
+                </td>
+            </tr>
+        }
+</table>
+
+<style>
+    .NoValid {
+        border-color: #e9322d !important;
+        box-shadow: 0 0 6px #f8b9b7 !important;
+    }
+
+    .alert {
+        position: fixed;
+        top: 0%;
+        text-align: center;
+        z-index: 1050;
+        width: 100%;
+    }
+
+</style>
+
+<script>
+
+    var Id = 0;
+    var Accion = '';
+
+    $(function () {
+
+        $('#TblPresonas').DataTable({
+            "paging": true,
+            "pageLength": 10
+        });
+
+        $('#TblPresonas_length,#TblPresonas_filter').remove();
+        
+        $('#Buscar').keypress(function () {
+
+            if ($(this).val() != '') {
+                $.ajax({
+                    url: 'Buscar',
+                    type: 'GET',
+                    dataType: 'json',
+                    data: {
+                        valor: $(this).val()
+                    },
+                    success: function (data) {
+                        $('#TblPresonas tbody').html('');
+                        $(data).each(function (index, element) {
+
+                            $('#exampleDialog').modal('hide');
+                            $('#exampleDialog input').val('');
+                            $('#exampleDialog select').val(1);
+                            $('#TblPresonas tbody').append('<tr>' +
+                                                            '<td>' + element.Nombre + '</td>' +
+                                                            '<td>' + element.ApellidoPaterno + '</td>' +
+                                                            '<td>' + element.ApellidoMaterno + '</td>' +
+                                                            '<td>' + element.CURP + '</td>' +
+                                                            '<td>' +
+                                                                '<a class="btn btn-info" data-toggle="modal" href="#exampleDialog" id="BtnEditar" onclick="editar(' + element.Id + ')">Editar</a>' +
+                                                                '<a class="btn btn-info" data-toggle="modal" href="#exampleDialog" id="BtnEliminar" onclick="eliminar(' + element.Id + ')">Eliminar</a></td>' +
+                                                           '</tr>');
+                        });
+
+
+                        $('#TblPresonas').fnDestroy();
+                        $('#TblPresonas').DataTable({
+                            "paging": true,
+                            "pageLength": 10
+                        });
+                        Mensaje('success', 'success!', 'Datos cargados correctamente.');
+                    }
+                });
+            }
+
+        });
+
+        $('#Nuevo').click(function () {
+            $('#DlgTitulo').html('Persona - Nueva');
+            $('#exampleDialog .ac').show();
+            $('#exampleDialog #GroupEstatus,#exampleDialog .b').hide();
+            Id = 0;
+            Accion = 'Nuevo';
+        });
+
+        $('.btn-primary').click(function () {
+
+            var metodo = '';
+            var enviar = {};
+
+            if (Accion == 'Nuevo' || Accion == 'Editar') {
+
+                if (Accion == 'Nuevo') { metodo = 'Guardar'; }
+                if (Accion == 'Editar') { metodo = 'Editar' }
+
+                enviar = {
+                    Id: Id,
+                    Nombre: $('#exampleDialog #Nombre').val(),
+                    ApellidoPaterno: $('#exampleDialog #ApellidoPaterno').val(),
+                    ApellidoMaterno: $('#exampleDialog #ApellidoMaterno').val(),
+                    CURP: $('#exampleDialog #CURP').val(),
+                    Estatus: $('#exampleDialog #Estatus').val()
+                };
+            }
+            else {
+                metodo = 'Eliminar';
+                enviar = {
+                    Id: Id
+                };
+            }
+            
+            var arrayValidacion = [];
+            $('#exampleDialog input:text').each(function (index, element) {
+                if ($(this).hasClass('requerido')) {
+                    if ($(this).val() == '') {
+                        $(this).addClass('NoValid');
+                        arrayValidacion.push($(this).attr('id') + ' => ' + $(this).val());
+                    }
+                    else {
+                        $(this).removeClass('NoValid');
+                    }
+                }
+            });
+
+            if (metodo == 'Eliminar') {
+                arrayValidacion = [];
+            }
+
+            if ($.isEmptyObject(arrayValidacion) == true) {
+
+                if (/[a-zA-Z]{4,4}[0-9]{6}[a-zA-Z]{6,6}[0-9]{2}/.test($('#exampleDialog #CURP').val()) == false && metodo != 'Eliminar') {
+                    Mensaje('danger', 'Error!', 'El curp es incorrecto');
+                }
+                else {
+                    $.ajax({
+                        url: metodo,
+                        type: 'GET',
+                        dataType: 'json',
+                        data: enviar,
+                        success: function (data) {
+                            $('#TblPresonas tbody').html('');
+                            $(data).each(function (index, element) {
+                                $('#exampleDialog').modal('hide');
+                                $('#exampleDialog input').val('');
+                                $('#exampleDialog select').val(1);
+                                $('#TblPresonas tbody').append('<tr>' +
+                                                                '<td>' + element.Nombre + '</td>' +
+                                                                '<td>' + element.ApellidoPaterno + '</td>' +
+                                                                '<td>' + element.ApellidoMaterno + '</td>' +
+                                                                '<td>' + element.CURP + '</td>' +
+                                                                '<td>' +
+                                                                    '<a class="btn btn-info" data-toggle="modal" href="#exampleDialog" id="BtnEditar" onclick="editar(' + element.Id + ')">Editar</a>' +
+                                                                    '<a class="btn btn-info" data-toggle="modal" href="#exampleDialog" id="BtnEliminar" onclick="eliminar(' + element.Id + ')">Eliminar</a></td>' +
+                                                               '</tr>');
+                            });
+
+                            
+                            $('#TblPresonas').fnDestroy();
+                            $('#TblPresonas').DataTable({
+                                "paging": true,
+                                "pageLength": 10
+                            });
+                            Mensaje('success', 'success!', 'Datos cargados correctamente.');
+                        }
+                    });
+                }
+            }
+            else{
+                Mensaje('danger', 'Error!', 'Faltan campos por llenar');
+            }
+        });
+
+    });
+
+    function editar(valor) {
+        $('#DlgTitulo').html('Persona - Editar');
+        $('#exampleDialog input:text').removeClass('NoValid');
+        $('#exampleDialog .b').hide();
+        $('#exampleDialog .ac').show();
+        Id = valor;
+        Accion = 'Editar';
+
+        $.ajax({
+            url: 'BuscarPersona',
+            type: 'GET',
+            dataType: 'json',
+            data: {
+                Id: valor
+            },
+            success: function (data) {
+                $('#exampleDialog #Nombre').val(data[0].Nombre),
+                $('#exampleDialog #ApellidoPaterno').val(data[0].ApellidoPaterno),
+                $('#exampleDialog #ApellidoMaterno').val(data[0].ApellidoMaterno),
+                $('#exampleDialog #CURP').val(data[0].CURP),
+                $('#exampleDialog #Estatus').val(data[0].Estatus)
+            }
+        });
+    }
+
+    function eliminar(valor) {
+        $('#DlgTitulo').html('Persona - Eliminar');
+        $('#exampleDialog .ac').hide();
+        $('#exampleDialog .b').show();
+        Id = valor;
+        Accion = 'Eliminar';
+    }
+
+    function Mensaje(Tipo,Texto,Mensaje) {
+        $('Body').prepend('<div class="alert alert-' + Tipo + '">' +
+                            '<strong>' + Texto + '</strong>.' + Mensaje +
+                         '</div>');
+
+        setTimeout(function () {
+            $('Body .alert').remove();
+        }, 3000);
+
+    }
+
+</script>

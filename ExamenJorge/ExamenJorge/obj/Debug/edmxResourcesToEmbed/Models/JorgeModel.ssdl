@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="JorgeModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityContainer Name="JorgeModelStoreContainer">
+    <EntitySet Name="Tbl_Personas" EntityType="JorgeModel.Store.Tbl_Personas" store:Type="Tables" Schema="dbo" />
+  </EntityContainer>
+  <EntityType Name="Tbl_Personas">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="Nombre" Type="varchar" Nullable="false" MaxLength="50" />
+    <Property Name="ApellidoPaterno" Type="varchar" Nullable="false" MaxLength="50" />
+    <Property Name="ApellidoMaterno" Type="varchar" Nullable="false" MaxLength="50" />
+    <Property Name="CURP" Type="varchar" Nullable="false" MaxLength="18" />
+    <Property Name="Estatus" Type="int" Nullable="false" />
+  </EntityType>
+</Schema>
